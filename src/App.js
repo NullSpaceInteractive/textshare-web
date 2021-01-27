@@ -1,26 +1,37 @@
 import './App.css';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import AppShare from "./AppShare";
+import { Route, Switch} from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-          <h1> TextShare.io </h1>
-      </header>
-      <TextShareField/>
-    </div>
-  );
+class App extends React.Component {
+    render() {
+        return (
+            <div>
+                <Switch>
+                    <Route path = "/:id" component={AppShare}>
+                    </Route>
+                    <Route path = "/">
+                        <div className="App">
+                            <header className="App-header">
+                                <h1> TextShare.io </h1>
+                            </header>
+                            <TextShareField/>
+                        </div>
+                    </Route>
+                </Switch>
+            </div>
+        );
+    }
 }
 
 export default App;
-
 
 class TextShareField extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: ''
+            value: '',
+            newPageId: '/',
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -33,10 +44,15 @@ class TextShareField extends React.Component {
 
     handleSubmit(event) {
         const xhttp = new XMLHttpRequest();
-        xhttp.open('POST', 'http://18.191.90.79:8080/api/new' ,true);
+        xhttp.responseType = 'text';
+        xhttp.open('POST', 'http://3.133.103.245:8080/api/new' ,true);
         xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
         xhttp.send(this.state.value);
-        console.log('submitted with value: ' + this.state.value);
+        xhttp.onload = function () {
+            this.setState({newPageId: xhttp.response})
+        }
+        const newURL = '/' + this.state.newPageId;
+        this.props.history.push(newURL);
         event.preventDefault();
     }
 
@@ -56,14 +72,10 @@ class TextShareField extends React.Component {
                     </div>
                 </div>
                 <footer className="App-footer">
-                    <shareButton className="Share-button" onClick = {this.handleSubmit}> Share </shareButton>
+                    <button className="Share-button" onClick = {this.handleSubmit}> Share </button>
                 </footer>
             </form>
         )
     }
 }
 
-ReactDOM.render(
-    <App/>,
-    document.getElementById('root'),
-)
