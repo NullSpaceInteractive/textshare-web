@@ -33,8 +33,7 @@ class TextShareField extends React.Component {
 
     handleSubmit(event) {
         const xhttp = new XMLHttpRequest();
-        xhttp.open('POST', 'http://18.191.90.79:8080/api/new' ,true);
-        xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
+        xhttp.open('POST', 'http://3.133.103.245:8080/api/new' ,true);
         xhttp.send(this.state.value);
         console.log('submitted with value: ' + this.state.value);
         event.preventDefault();
